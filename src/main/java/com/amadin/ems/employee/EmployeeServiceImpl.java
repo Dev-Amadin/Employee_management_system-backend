@@ -54,7 +54,7 @@ public class EmployeeServiceImpl implements EmployeeService {
     @Override
     public EmployeeDto updateEmployee(String employeeId, EmployeeDto employeeDto) {
         Employee employee = employeeRepository.findById(employeeId)
-                .orElseThrow(() -> new ResourceNotFoundException("Employee does not exist with give id: " + employeeId));
+                .orElseThrow(() -> new ResourceNotFoundException("Employee does not exist with given id: " + employeeId));
 
         employee.setFirstName(employeeDto.getFirstName());
         employee.setLastName(employeeDto.getLastName());

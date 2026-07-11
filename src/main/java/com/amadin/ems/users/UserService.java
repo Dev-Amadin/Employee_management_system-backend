@@ -1,64 +1,29 @@
 package com.amadin.ems.users;
 
-import java.time.Instant;
-import java.util.Collections;
+import org.springframework.data.domain.Page;
 
-import javax.management.RuntimeErrorException;
+public interface UserService {
 
-import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.dao.DataIntegrityViolationException;
-import org.springframework.security.core.userdetails.UserDetails;
-import org.springframework.security.core.userdetails.UserDetailsService;
-import org.springframework.security.core.userdetails.UsernameNotFoundException;
-import org.springframework.security.crypto.password.PasswordEncoder;
-import org.springframework.stereotype.Service;
+    public UserDto getUserWithUsername(String username);
 
-import com.amadin.ems.exception.DetailsAlreadyExistException;
+    public UserDto createGuestUser(String username, String password);
 
-@Service
-public class UserService implements UserDetailsService {
+    public UserDto createUser(UserDto userDto);
 
-    @Autowired
-    private UserRepository userRepository;
+    public Page<UserDto> getAllUsers(int size, int page, String sortField, String sortDirection);
 
-    @Autowired
-    private PasswordEncoder passwordEncoder;
+     public UserDto getUserById(String id);
 
-    public User getUserWithUsername(String username) {
+    public UserDto updateUser(String id, UserDto userDto);
 
-        User user = userRepository.findByUsernameAndIsActive(username, true)
-                .orElseThrow(() -> new UsernameNotFoundException("User not found"));
+    public UserDto getUserByIdAndStatus(String id, Boolean isActive);
 
-        return user;
-    }
+    public UserDto deactivateUser(String id);
 
-    @Override
-    public UserDetails loadUserByUsername(String username) throws UsernameNotFoundException {
+    public UserDto activateUser(String id);
 
-        User user = getUserWithUsername(username);
+    public void deleteUser(String id);
 
-        return org.springframework.security.core.userdetails.User.builder()
-                .username(user.getUsername())
-                .password(user.getPassword())
-                .authorities(Collections.emptyList())
-                .build();
-    }
 
-    public User createNewUser(String username, String password) {
-        User user = new User();
-        user.setUsername(username);
-        user.setPassword(passwordEncoder.encode(password));
-        user.setEmail("");
-        user.setIsActive(true);
-        user.setCreatedAt(Instant.now());
-        user.setUpdatedAt(Instant.now());
-
-        try {
-              return userRepository.save(user);
-        } catch (DataIntegrityViolationException e) {
-            throw new DetailsAlreadyExistException("Username already exists");
-        }
-  
-    }
 
 }

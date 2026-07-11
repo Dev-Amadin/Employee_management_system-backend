@@ -1,4 +1,4 @@
-package com.amadin.ems.employee;
+package com.amadin.ems.users;
 
 import java.time.Instant;
 
@@ -9,14 +9,15 @@ import lombok.NoArgsConstructor;
 @Data
 @AllArgsConstructor
 @NoArgsConstructor
-public class EmployeeDto {
+public class UserDto {
 
     private String id;
-    private String firstName;
-    private String lastName;
-    private String email;
-    private String department;
+    private String username;
+    private String password;
+    private String employeeId;
+    private String employeeName;
+    private String role;
+    private Boolean isActive;
     private Instant createdAt;
     private Instant updatedAt;
-
 }

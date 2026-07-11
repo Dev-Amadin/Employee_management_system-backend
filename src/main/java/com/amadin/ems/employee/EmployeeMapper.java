@@ -8,6 +8,7 @@ public class EmployeeMapper {
                 employee.getFirstName(),
                 employee.getLastName(),
                 employee.getEmail(),
+                employee.getDepartment(),
                 employee.getCreatedAt(),
                 employee.getUpdatedAt());
     }
@@ -18,6 +19,7 @@ public class EmployeeMapper {
                 employeeDto.getFirstName(),
                 employeeDto.getLastName(),
                 employeeDto.getEmail(),
+                employeeDto.getDepartment(),
                 employeeDto.getCreatedAt(),
                 employeeDto.getUpdatedAt());
     }
