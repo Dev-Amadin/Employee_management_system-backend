@@ -12,7 +12,7 @@ import org.springframework.web.bind.annotation.ExceptionHandler;
 import org.springframework.web.context.request.WebRequest;
 
 @ControllerAdvice
-public class CustomerErrorHandler {
+public class CustomErrorHandler {
 
     @ExceptionHandler(value = { ResourceNotFoundException.class })
     public ResponseEntity<?> handleNotFoundExceptions(ResourceNotFoundException exception, WebRequest request) {
