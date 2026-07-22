@@ -10,6 +10,8 @@ public interface EmployeeService {
 
     Page<EmployeeDto> getAllEmployees(int size, int page, String sortField, String sortDirection);
 
+    Page<EmployeeDto> searchEmployees(int size, int page, String sortField, String sortDirection, String searchValue);
+
     EmployeeDto updateEmployee(String employeeId, EmployeeDto employeeDto);
 
     void deleteEmployee(String employeeId);

@@ -14,7 +14,6 @@ import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.RestController;
 
-
 @RestController
 @RequestMapping("/employee")
 public class EmployeeController {
@@ -49,7 +48,21 @@ public class EmployeeController {
         return ResponseEntity.ok(employees);
     }
 
-    //Update Employee REST API
+    // SEARCH Employees REST API
+    @GetMapping("/search")
+    public ResponseEntity<Page<EmployeeDto>> searchEmployees(
+            @RequestParam(defaultValue = "0") int page,
+            @RequestParam(defaultValue = "5") int size,
+            @RequestParam(defaultValue = "DESC") String sortDirection,
+            @RequestParam(defaultValue = "createdAt") String sortField,
+             @RequestParam String searchValue
+
+    ) {
+        Page<EmployeeDto> employees = employeeService.searchEmployees(size, page, sortField, sortDirection, searchValue);
+        return ResponseEntity.ok(employees);
+    }
+
+    // Update Employee REST API
     @PatchMapping("{id}")
     public ResponseEntity<EmployeeDto> updateEmployee(@PathVariable("id") String employeeId,
             @RequestBody EmployeeDto employeeDto) {
@@ -57,7 +70,7 @@ public class EmployeeController {
         return ResponseEntity.ok(updatedEmployee);
     }
 
-    //Delete Employee REST API
+    // Delete Employee REST API
     @DeleteMapping("{id}")
     public ResponseEntity<String> deleteEmployee(@PathVariable("id") String employeeId) {
         employeeService.deleteEmployee(employeeId);

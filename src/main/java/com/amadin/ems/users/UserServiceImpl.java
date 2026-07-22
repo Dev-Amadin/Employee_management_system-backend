@@ -109,10 +109,14 @@ public class UserServiceImpl implements UserService {
         User user = userRepository.findById(id)
                 .orElseThrow(() -> new ResourceNotFoundException("User does not exist with given id: " + id));
 
+        if (userDto.getEmployeeId().isEmpty())
+            throw new BadRequestException("Employee can not be empty");
+
+        Employee employee = EmployeeMapper.mapToEmployee(employeeService.getEmployeeById(userDto.getEmployeeId()));
+        user.setEmployee(employee);
         user.setUsername(userDto.getUsername());
         user.setPassword(userDto.getPassword());
         user.setRole(userDto.getRole());
-        user.setIsActive(userDto.getIsActive());
         user.setUpdatedAt(Instant.now());
 
         try {
