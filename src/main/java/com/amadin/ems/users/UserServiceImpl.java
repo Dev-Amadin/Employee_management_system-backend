@@ -1,16 +1,16 @@
 package com.amadin.ems.users;
 
 import java.time.Instant;
-import org.springframework.beans.factory.annotation.Autowired;
+import java.util.Collections;
+
 import org.springframework.dao.DataIntegrityViolationException;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.PageRequest;
 import org.springframework.data.domain.Pageable;
 import org.springframework.data.domain.Sort.Direction;
-// import org.springframework.security.core.userdetails.UserDetails;
-// import org.springframework.security.core.userdetails.UserDetailsService;
-// import org.springframework.security.core.userdetails.UsernameNotFoundException;
-// import org.springframework.security.crypto.password.PasswordEncoder;
+import org.springframework.security.core.userdetails.UserDetails;
+import org.springframework.security.core.userdetails.UsernameNotFoundException;
+import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
 
 import com.amadin.ems.employee.Employee;
@@ -20,16 +20,15 @@ import com.amadin.ems.exception.BadRequestException;
 import com.amadin.ems.exception.DetailsAlreadyExistException;
 import com.amadin.ems.exception.ResourceNotFoundException;
 
+import lombok.RequiredArgsConstructor;
+
 @Service
+@RequiredArgsConstructor
 public class UserServiceImpl implements UserService {
-    @Autowired
-    private UserRepository userRepository;
 
-    @Autowired
-    private EmployeeService employeeService;
-
-    // @Autowired
-    // private PasswordEncoder passwordEncoder;
+    private final UserRepository userRepository;
+    private final EmployeeService employeeService;
+    private final PasswordEncoder passwordEncoder;
 
     public UserDto getUserWithUsername(String username) {
         User user = userRepository.findByUsernameAndIsActive(username, true)
@@ -38,25 +37,23 @@ public class UserServiceImpl implements UserService {
         return UserMapper.mapToUserDTO(user);
     }
 
-    // @Override
-    // public UserDetails loadUserByUsername(String username) throws
-    // UsernameNotFoundException {
+    @Override
+    public UserDetails loadUserByUsername(String username) throws UsernameNotFoundException {
 
-    // User user = getUserWithUsername(username);
+        User user = UserMapper.mapToUser(getUserWithUsername(username));
 
-    // return org.springframework.security.core.userdetails.User.builder()
-    // .username(user.getUsername())
-    // .password(user.getPassword())
-    // .authorities(Collections.emptyList())
-    // .build();
-    // }
+        return org.springframework.security.core.userdetails.User.builder()
+                .username(user.getUsername())
+                .password(user.getPassword())
+                .authorities(Collections.emptyList())
+                .build();
+    }
 
     public UserDto createGuestUser(String username, String password) {
 
         User user = new User();
         user.setUsername(username);
-        // user.setPassword(passwordEncoder.encode(password));
-        user.setPassword(password);
+        user.setPassword(passwordEncoder.encode(password));
         user.setRole("");
         user.setIsActive(true);
         user.setCreatedAt(Instant.now());
@@ -77,6 +74,7 @@ public class UserServiceImpl implements UserService {
 
         Employee employee = EmployeeMapper.mapToEmployee(employeeService.getEmployeeById(userDto.getEmployeeId()));
         User user = UserMapper.mapToUser(userDto);
+        user.setPassword(passwordEncoder.encode(userDto.getPassword()));
         user.setEmployee(employee);
         user.setCreatedAt(Instant.now());
         user.setUpdatedAt(Instant.now());
@@ -115,7 +113,7 @@ public class UserServiceImpl implements UserService {
         Employee employee = EmployeeMapper.mapToEmployee(employeeService.getEmployeeById(userDto.getEmployeeId()));
         user.setEmployee(employee);
         user.setUsername(userDto.getUsername());
-        user.setPassword(userDto.getPassword());
+        user.setPassword(passwordEncoder.encode(userDto.getPassword()));
         user.setRole(userDto.getRole());
         user.setUpdatedAt(Instant.now());
 

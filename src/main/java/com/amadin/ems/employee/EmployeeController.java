@@ -1,6 +1,5 @@
 package com.amadin.ems.employee;
 
-import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.domain.Page;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
@@ -14,12 +13,14 @@ import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.RestController;
 
+import lombok.RequiredArgsConstructor;
+
 @RestController
 @RequestMapping("/employee")
+@RequiredArgsConstructor
 public class EmployeeController {
 
-    @Autowired
-    private EmployeeService employeeService;
+    private final EmployeeService employeeService;
 
     // Create Employee REST API
     @PostMapping
@@ -55,10 +56,11 @@ public class EmployeeController {
             @RequestParam(defaultValue = "5") int size,
             @RequestParam(defaultValue = "DESC") String sortDirection,
             @RequestParam(defaultValue = "createdAt") String sortField,
-             @RequestParam String searchValue
+            @RequestParam String searchValue
 
     ) {
-        Page<EmployeeDto> employees = employeeService.searchEmployees(size, page, sortField, sortDirection, searchValue);
+        Page<EmployeeDto> employees = employeeService.searchEmployees(size, page, sortField, sortDirection,
+                searchValue);
         return ResponseEntity.ok(employees);
     }
 

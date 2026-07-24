@@ -2,7 +2,6 @@ package com.amadin.ems.employee;
 
 import java.time.Instant;
 
-import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.PageRequest;
 import org.springframework.data.domain.Pageable;
@@ -11,15 +10,22 @@ import org.springframework.stereotype.Service;
 
 import com.amadin.ems.exception.ResourceNotFoundException;
 
+import lombok.RequiredArgsConstructor;
+
 @Service
+@RequiredArgsConstructor
 public class EmployeeServiceImpl implements EmployeeService {
 
-    @Autowired
-    private EmployeeRepository employeeRepository;
+    
+    private final EmployeeRepository employeeRepository;
 
     @Override
     public EmployeeDto createEmployee(EmployeeDto employeeDto) {
         Employee employee = EmployeeMapper.mapToEmployee(employeeDto);
+        if (!employeeDto.getManagerId().isBlank()) {
+            Employee manager = EmployeeMapper.mapToEmployee(getEmployeeById(employeeDto.getManagerId()));
+            employee.setManager(manager);
+        }
         employee.setCreatedAt(Instant.now());
         employee.setUpdatedAt(Instant.now());
         Employee savedEmployee = employeeRepository.save(employee);
@@ -57,6 +63,13 @@ public class EmployeeServiceImpl implements EmployeeService {
                 .orElseThrow(
                         () -> new ResourceNotFoundException("Employee does not exist with given id: " + employeeId));
 
+        if ((!employeeDto.getManagerId().isBlank() && employee.getManager() == null)
+                || (!employeeDto.getManagerId().isBlank() && (employee.getManager() != null
+                        && !employee.getManager().getId().equals(employeeDto.getManagerId())))) {
+            Employee manager = EmployeeMapper.mapToEmployee(getEmployeeById(employeeDto.getManagerId()));
+            employee.setManager(manager);
+        }
+
         employee.setFirstName(employeeDto.getFirstName());
         employee.setLastName(employeeDto.getLastName());
         employee.setEmail(employeeDto.getEmail());
@@ -89,7 +102,8 @@ public class EmployeeServiceImpl implements EmployeeService {
             pageable = PageRequest.of(page, size, Direction.DESC, sortField);
         }
 
-        Page<Employee> employees = employeeRepository.findByFirstNameContainsIgnoreCaseOrLastNameContainsIgnoreCase(searchValue,
+        Page<Employee> employees = employeeRepository.findByFirstNameContainsIgnoreCaseOrLastNameContainsIgnoreCase(
+                searchValue,
                 searchValue, pageable);
 
         return employees.map((emp) -> EmployeeMapper.mapToEmployeeDto(emp));

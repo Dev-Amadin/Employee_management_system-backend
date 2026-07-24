@@ -1,49 +1,49 @@
-// package com.amadin.ems.security;
+package com.amadin.ems.security;
 
-// import org.springframework.context.annotation.Bean;
-// import org.springframework.context.annotation.Configuration;
-// import org.springframework.security.authentication.AuthenticationManager;
-// import org.springframework.security.authentication.ProviderManager;
-// import org.springframework.security.authentication.dao.DaoAuthenticationProvider;
-// import org.springframework.security.config.Customizer;
-// import org.springframework.security.config.annotation.web.builders.HttpSecurity;
-// import org.springframework.security.config.annotation.web.configuration.EnableWebSecurity;
-// import org.springframework.security.core.userdetails.UserDetailsService;
-// import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
-// import org.springframework.security.crypto.password.PasswordEncoder;
-// import org.springframework.security.web.SecurityFilterChain;
+import org.springframework.context.annotation.Bean;
+import org.springframework.context.annotation.Configuration;
+import org.springframework.security.authentication.AuthenticationManager;
+import org.springframework.security.authentication.ProviderManager;
+import org.springframework.security.authentication.dao.DaoAuthenticationProvider;
+import org.springframework.security.config.annotation.web.builders.HttpSecurity;
+import org.springframework.security.config.annotation.web.configuration.EnableWebSecurity;
+import org.springframework.security.core.userdetails.UserDetailsService;
+import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
+import org.springframework.security.crypto.password.PasswordEncoder;
+import org.springframework.security.web.SecurityFilterChain;
+import org.springframework.security.web.authentication.UsernamePasswordAuthenticationFilter;
 
-// // import com.amadin.ems.users.UserService;
+import lombok.RequiredArgsConstructor;
 
-// @Configuration
-// @EnableWebSecurity
-// public class Config {
+@Configuration
+@EnableWebSecurity
+@RequiredArgsConstructor
+public class Config {
 
-//     @Bean
-//     public SecurityFilterChain basicAuth(HttpSecurity http) {
-//         http
-//                 .authorizeHttpRequests(auth -> auth
-//                     .requestMatchers("/api/ems/users/**").permitAll()
-//                     .anyRequest().authenticated())
-//                 .httpBasic(Customizer.withDefaults());
+    private final JwtFilter jwtFilter;
 
-//         return http.build();
-//     }
+    @Bean
+    SecurityFilterChain basicAuth(HttpSecurity http) {
+        http
+                .csrf(csrf -> csrf.disable())
+                .authorizeHttpRequests(auth -> auth
+                        .requestMatchers("/auth/**").permitAll()
+                        .anyRequest().authenticated())
+                .addFilterBefore(jwtFilter, UsernamePasswordAuthenticationFilter.class);
 
-//     // @Bean
-//     // public UserDetailsService userDetailsService() {
-//     //     return new UserService();
-//     // }
+        return http.build();
+    }
 
-//     @Bean
-//     public AuthenticationManager authenticationManager(UserDetailsService userDetailsService, PasswordEncoder passwordEncoder) {
-//         DaoAuthenticationProvider daoAuthenticationProvider = new DaoAuthenticationProvider(userDetailsService);
-//         daoAuthenticationProvider.setPasswordEncoder(passwordEncoder);
-//         return new ProviderManager(daoAuthenticationProvider);
-//     }
+    @Bean
+    AuthenticationManager authenticationManager(UserDetailsService userDetailsService,
+            PasswordEncoder passwordEncoder) {
+        DaoAuthenticationProvider daoAuthenticationProvider = new DaoAuthenticationProvider(userDetailsService);
+        daoAuthenticationProvider.setPasswordEncoder(passwordEncoder);
+        return new ProviderManager(daoAuthenticationProvider);
+    }
 
-//     @Bean
-//     public PasswordEncoder passwordEncoder() {
-//         return new BCryptPasswordEncoder();
-//     }
-// }
+    @Bean
+    PasswordEncoder passwordEncoder() {
+        return new BCryptPasswordEncoder();
+    }
+}
