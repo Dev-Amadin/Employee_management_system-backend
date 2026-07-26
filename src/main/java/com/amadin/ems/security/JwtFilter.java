@@ -32,6 +32,7 @@ public class JwtFilter extends OncePerRequestFilter {
         if (authHeader != null && authHeader.startsWith("Bearer")) {
             token = authHeader.substring(7);
         }
+        
 
         if (token != null && SecurityContextHolder.getContext().getAuthentication() == null) {
             Claims claims = jwtService.verifySignatureAndExtractAllClaims(token);
