@@ -39,24 +39,37 @@ public class EmployeeController {
     // Get all Employees REST API
     @GetMapping
     public ResponseEntity<Page<EmployeeDto>> getAllEmployees(
-            @RequestParam(defaultValue = "0") int page,
-            @RequestParam(defaultValue = "5") int size,
-            @RequestParam(defaultValue = "DESC") String sortDirection,
-            @RequestParam(defaultValue = "createdAt") String sortField
+            @RequestParam(required = false, defaultValue = "0") int page,
+            @RequestParam(required = false, defaultValue = "5") int size,
+            @RequestParam(required = false,defaultValue = "DESC") String sortDirection,
+            @RequestParam(required = false,defaultValue = "createdAt") String sortField
 
     ) {
         Page<EmployeeDto> employees = employeeService.getAllEmployees(size, page, sortField, sortDirection);
         return ResponseEntity.ok(employees);
     }
 
+    @GetMapping("/v2")
+    public ResponseEntity<Page<EmployeeDto>> getEmployeesWithSpecification(
+            @RequestParam(required = false, defaultValue = "0") int page,
+            @RequestParam(required = false, defaultValue = "5") int size,
+            @RequestParam(required = false,defaultValue = "DESC") String sortDirection,
+            @RequestParam(required = false,defaultValue = "createdAt") String sortField,
+            @RequestParam(required = false) String searchValue
+
+    ) {
+        Page<EmployeeDto> employees = employeeService.getEmployeesWithSpecification(size, page, sortField, sortDirection, searchValue);
+        return ResponseEntity.ok(employees);
+    }
+
     // SEARCH Employees REST API
     @GetMapping("/search")
     public ResponseEntity<Page<EmployeeDto>> searchEmployees(
-            @RequestParam(defaultValue = "0") int page,
-            @RequestParam(defaultValue = "5") int size,
-            @RequestParam(defaultValue = "DESC") String sortDirection,
-            @RequestParam(defaultValue = "createdAt") String sortField,
-            @RequestParam String searchValue
+            @RequestParam(required = false, defaultValue = "0") int page,
+            @RequestParam(required = false, defaultValue = "5") int size,
+            @RequestParam(required = false,defaultValue = "DESC") String sortDirection,
+            @RequestParam(required = false,defaultValue = "createdAt") String sortField,
+            @RequestParam(required = false) String searchValue
 
     ) {
         Page<EmployeeDto> employees = employeeService.searchEmployees(size, page, sortField, sortDirection,

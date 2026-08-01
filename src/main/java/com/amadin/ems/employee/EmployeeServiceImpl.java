@@ -6,6 +6,7 @@ import org.springframework.data.domain.Page;
 import org.springframework.data.domain.PageRequest;
 import org.springframework.data.domain.Pageable;
 import org.springframework.data.domain.Sort.Direction;
+import org.springframework.data.jpa.domain.Specification;
 import org.springframework.stereotype.Service;
 
 import com.amadin.ems.exception.ResourceNotFoundException;
@@ -16,7 +17,6 @@ import lombok.RequiredArgsConstructor;
 @RequiredArgsConstructor
 public class EmployeeServiceImpl implements EmployeeService {
 
-    
     private final EmployeeRepository employeeRepository;
 
     @Override
@@ -108,6 +108,25 @@ public class EmployeeServiceImpl implements EmployeeService {
 
         return employees.map((emp) -> EmployeeMapper.mapToEmployeeDto(emp));
 
+    }
+
+    @Override
+    public Page<EmployeeDto> getEmployeesWithSpecification(int size, int page, String sortField, String sortDirection,
+            String searchValue) {
+
+        Specification<Employee> spec = EmployeeSpecification.getSpecification(searchValue);
+
+        Pageable pageable = null;
+
+        if (sortDirection.equalsIgnoreCase("ASC")) {
+            pageable = PageRequest.of(page, size, Direction.ASC, sortField);
+        } else {
+            pageable = PageRequest.of(page, size, Direction.DESC, sortField);
+        }
+
+        Page<Employee> employees = employeeRepository.findAll(spec, pageable);
+
+        return employees.map((emp) -> EmployeeMapper.mapToEmployeeDto(emp));
     }
 
 }

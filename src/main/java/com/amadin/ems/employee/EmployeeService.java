@@ -12,6 +12,8 @@ public interface EmployeeService {
 
     Page<EmployeeDto> searchEmployees(int size, int page, String sortField, String sortDirection, String searchValue);
 
+     Page<EmployeeDto> getEmployeesWithSpecification(int size, int page, String sortField, String sortDirection, String searchValue);
+
     EmployeeDto updateEmployee(String employeeId, EmployeeDto employeeDto);
 
     void deleteEmployee(String employeeId);
