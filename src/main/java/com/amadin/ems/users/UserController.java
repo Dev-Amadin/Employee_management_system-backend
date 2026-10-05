@@ -13,6 +13,7 @@ import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.RestController;
 
+import jakarta.validation.Valid;
 import lombok.RequiredArgsConstructor;
 
 @RestController
@@ -33,7 +34,7 @@ public class UserController {
 
     // CREATE USER REST API
     @PostMapping
-    public ResponseEntity<UserDto> createUser(@RequestBody UserDto userDto) {
+    public ResponseEntity<UserDto> createUser(@RequestBody @Valid UserDto userDto) {
         UserDto createdUser = userService.createUser(userDto);
         return new ResponseEntity<UserDto>(createdUser, HttpStatus.CREATED);
     }

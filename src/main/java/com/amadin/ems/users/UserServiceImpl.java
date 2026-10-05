@@ -69,10 +69,12 @@ public class UserServiceImpl implements UserService {
 
     @Override
     public UserDto createUser(UserDto userDto) {
-        if (userDto.getEmployeeId().isEmpty())
-            throw new BadRequestException("Employee can not be empty");
+        Employee employee = null;
 
-        Employee employee = EmployeeMapper.mapToEmployee(employeeService.getEmployeeById(userDto.getEmployeeId()));
+        if (userDto.getEmployeeId() != null && !userDto.getEmployeeId().isEmpty()) {
+             employee = EmployeeMapper.mapToEmployee(employeeService.getEmployeeById(userDto.getEmployeeId()));
+        }
+
         User user = UserMapper.mapToUser(userDto);
         user.setPassword(passwordEncoder.encode(userDto.getPassword()));
         user.setEmployee(employee);

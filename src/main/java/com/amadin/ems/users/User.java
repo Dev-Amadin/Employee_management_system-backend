@@ -11,6 +11,8 @@ import jakarta.persistence.GenerationType;
 import jakarta.persistence.Id;
 import jakarta.persistence.OneToOne;
 import jakarta.persistence.Table;
+import jakarta.validation.constraints.NotNull;
+import jakarta.validation.constraints.Size;
 import lombok.AllArgsConstructor;
 import lombok.Data;
 import lombok.NoArgsConstructor;
@@ -26,7 +28,9 @@ public class User {
     @GeneratedValue(strategy = GenerationType.UUID)
     private String id;
     @Column(nullable = false, unique = true)
+    @NotNull(message = "Username can not be empty")
     private String username;
+    @Size(min = 6, message = "Password must be more than 6 characters")
     private String password;
     @OneToOne
     private Employee employee;
