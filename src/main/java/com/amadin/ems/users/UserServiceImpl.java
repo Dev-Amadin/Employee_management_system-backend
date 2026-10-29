@@ -1,7 +1,6 @@
 package com.amadin.ems.users;
 
 import java.time.Instant;
-import java.util.Collections;
 
 import org.springframework.dao.DataIntegrityViolationException;
 import org.springframework.data.domain.Page;
@@ -40,13 +39,13 @@ public class UserServiceImpl implements UserService {
     @Override
     public UserDetails loadUserByUsername(String username) throws UsernameNotFoundException {
 
-        User user = UserMapper.mapToUser(getUserWithUsername(username));
+        return UserMapper.mapToUser(getUserWithUsername(username));
 
-        return org.springframework.security.core.userdetails.User.builder()
-                .username(user.getUsername())
-                .password(user.getPassword())
-                .authorities(Collections.emptyList())
-                .build();
+        // return org.springframework.security.core.userdetails.User.builder()
+        //         .username(user.getUsername())
+        //         .password(user.getPassword())
+        //         .authorities(user.getRole())
+        //         .build();
     }
 
     public UserDto createGuestUser(String username, String password) {

@@ -2,6 +2,6 @@ package com.amadin.ems.security.auth;
 
 public interface AuthService {
 
-     String autheticateLogin(AuthRequest request);
+     AuthResponse autheticateLogin(AuthRequest request);
 
 }
