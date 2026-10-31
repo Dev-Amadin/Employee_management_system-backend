@@ -1,6 +1,7 @@
 package com.amadin.ems.exception;
 
 import java.util.Date;
+import java.util.List;
 
 import org.springframework.dao.DataIntegrityViolationException;
 import org.springframework.http.HttpStatus;
@@ -50,10 +51,13 @@ public class CustomErrorHandler {
     public ResponseEntity<?> handleMethodArgumentNotValidException(MethodArgumentNotValidException exception,
             WebRequest request) {
 
+        List<String> errors = exception.getBindingResult().getFieldErrors().stream()
+                .map(error -> error.getDefaultMessage()).toList();
+
         ExceptionResponse response = new ExceptionResponse(
                 HttpStatus.BAD_REQUEST.value(),
                 HttpStatus.BAD_REQUEST.name(),
-                exception.getMessage(),
+                String.join(",", errors),
                 request.getDescription(false),
                 new Date());
 

@@ -61,7 +61,7 @@ public class UserController {
 
     // UPDATE USER REST API
     @PatchMapping("{id}")
-    public ResponseEntity<UserDto> updateUser(@PathVariable("id") String userId, @RequestBody UserDto userDto) {
+    public ResponseEntity<UserDto> updateUser(@Valid @PathVariable("id") String userId, @RequestBody UserDto userDto) {
         UserDto updatedUser = userService.updateUser(userId, userDto);
         return ResponseEntity.ok(updatedUser);
     }

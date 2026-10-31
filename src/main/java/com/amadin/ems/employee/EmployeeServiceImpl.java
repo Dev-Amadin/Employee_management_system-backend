@@ -26,6 +26,7 @@ public class EmployeeServiceImpl implements EmployeeService {
             Employee manager = EmployeeMapper.mapToEmployee(getEmployeeById(employeeDto.getManagerId()));
             employee.setManager(manager);
         }
+        employee.setLeaveLeft(21);
         employee.setCreatedAt(Instant.now());
         employee.setUpdatedAt(Instant.now());
         Employee savedEmployee = employeeRepository.save(employee);
@@ -61,7 +62,7 @@ public class EmployeeServiceImpl implements EmployeeService {
     public EmployeeDto updateEmployee(String employeeId, EmployeeDto employeeDto) {
         Employee employee = employeeRepository.findById(employeeId)
                 .orElseThrow(
-                        () -> new ResourceNotFoundException("Employee does not exist with given id: " + employeeId));
+                        () -> new ResourceNotFoundException("Employee not found. id: " + employeeId));
 
         if ((!employeeDto.getManagerId().isBlank() && employee.getManager() == null)
                 || (!employeeDto.getManagerId().isBlank() && (employee.getManager() != null

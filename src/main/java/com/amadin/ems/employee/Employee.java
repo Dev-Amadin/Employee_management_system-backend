@@ -34,6 +34,7 @@ public class Employee {
     private Employee manager;
     @OneToMany(mappedBy = "manager")
     private List<Employee> suborninates;
+    private Integer leaveLeft;
     private Instant createdAt;
     private Instant updatedAt;
 
